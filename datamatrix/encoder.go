@@ -4,7 +4,7 @@ package datamatrix
 import (
 	"errors"
 
-	"github.com/boombuler/barcode"
+	"github.com/wildberries-ru/barcode"
 )
 
 // Encode returns a Datamatrix barcode for the given content

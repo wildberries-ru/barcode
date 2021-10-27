@@ -27,8 +27,8 @@ import (
 	"image/png"
 	"os"
 
-	"github.com/boombuler/barcode"
-	"github.com/boombuler/barcode/qr"
+	"github.com/wildberries-ru/barcode"
+	"github.com/wildberries-ru/barcode/qr"
 )
 
 func main() {
@@ -48,6 +48,6 @@ func main() {
 ```
 
 ## Documentation ##
-See [GoDoc](https://godoc.org/github.com/boombuler/barcode)
+See [GoDoc](https://godoc.org/github.com/wildberries-ru/barcode)
 
 To create a barcode use the Encode function from one of the subpackages.

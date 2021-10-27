@@ -5,7 +5,7 @@ import (
 	"image"
 	"image/color"
 
-	"github.com/boombuler/barcode"
+	"github.com/wildberries-ru/barcode"
 )
 
 type base1DCode struct {

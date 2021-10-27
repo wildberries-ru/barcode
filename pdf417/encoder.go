@@ -4,8 +4,8 @@ package pdf417
 import (
 	"fmt"
 
-	"github.com/boombuler/barcode"
-	"github.com/boombuler/barcode/utils"
+	"github.com/wildberries-ru/barcode"
+	"github.com/wildberries-ru/barcode/utils"
 )
 
 const (
