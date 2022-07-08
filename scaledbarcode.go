@@ -48,12 +48,12 @@ func (bc *intCSscaledBC) CheckSum() int {
 }
 
 // Scale returns a resized barcode with the given width and height.
-func Scale(bc Barcode, width, height int) (Barcode, error) {
+func Scale(bc Barcode, width, height, offset int) (Barcode, error) {
 	switch bc.Metadata().Dimensions {
 	case 1:
-		return scale1DCode(bc, width, height)
+		return scale1DCode(bc, width, height, offset)
 	case 2:
-		return scale2DCode(bc, width, height)
+		return scale2DCode(bc, width, height, offset)
 	}
 
 	return nil, errors.New("unsupported barcode format")
@@ -72,25 +72,22 @@ func newScaledBC(wrapped Barcode, wrapperFunc wrapFunc, rect image.Rectangle) Ba
 	return result
 }
 
-func scale2DCode(bc Barcode, width, height int) (Barcode, error) {
+func scale2DCode(bc Barcode, width, height, offset int) (Barcode, error) {
 	orgBounds := bc.Bounds()
 	orgWidth := orgBounds.Max.X - orgBounds.Min.X
 	orgHeight := orgBounds.Max.Y - orgBounds.Min.Y
 
-	factor := int(math.Min(float64(width)/float64(orgWidth), float64(height)/float64(orgHeight)))
+	factor := int(math.Min(float64(width - 2 * offset)/float64(orgWidth), float64(height - 2 * offset)/float64(orgHeight)))
 	if factor <= 0 {
 		return nil, fmt.Errorf("can not scale barcode to an image smaller than %dx%d", orgWidth, orgHeight)
 	}
 
-	offsetX := (width - (orgWidth * factor)) / 2
-	offsetY := (height - (orgHeight * factor)) / 2
-
 	wrap := func(x, y int) color.Color {
-		if x < offsetX || y < offsetY {
+		if x < offset || y < offset {
 			return color.White
 		}
-		x = (x - offsetX) / factor
-		y = (y - offsetY) / factor
+		x = (x - offset) / factor
+		y = (y - offset) / factor
 		if x >= orgWidth || y >= orgHeight {
 			return color.White
 		}
@@ -104,21 +101,20 @@ func scale2DCode(bc Barcode, width, height int) (Barcode, error) {
 	), nil
 }
 
-func scale1DCode(bc Barcode, width, height int) (Barcode, error) {
+func scale1DCode(bc Barcode, width, height, offset int) (Barcode, error) {
 	orgBounds := bc.Bounds()
 	orgWidth := orgBounds.Max.X - orgBounds.Min.X
-	factor := (float64(width) - float64(width)*float64(0.22)) / float64(orgWidth)
+	factor := float64(width - 2 * offset) / float64(orgWidth)
 
 	if factor <= 0 {
 		return nil, fmt.Errorf("can not scale barcode to an image smaller than %dx1", orgWidth)
 	}
-	offsetX := (float64(width) - (float64(orgWidth) * factor)) / 2
 
 	wrap := func(x, y int) color.Color {
-		if float64(x) < offsetX {
+		if x < offset {
 			return color.White
 		}
-		x = int((float64(x) - offsetX) / factor)
+		x = int(float64(x - offset) / factor)
 
 		if x >= orgWidth {
 			return color.White
